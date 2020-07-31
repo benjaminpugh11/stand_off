@@ -1,7 +1,7 @@
 # stand_off
 Stand Off Against a Rogue Computer Cowboy (RCC).
 
-This is an easy game that I created to remember some C basics. The code for this game covers
+This is an easy game that I created to remember some C basics as well as an advocate for why OOP exists. The code for this game covers the following C basics:
 * Basic C Syntax
 * Operators
 * Functions

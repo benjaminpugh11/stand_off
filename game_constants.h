@@ -1,20 +1,14 @@
 #ifndef GAME_CONSTANTS_H_INCLUDED
 #define GAME_CONSTANTS_H_INCLUDED
 
-//Menu Options / Moves
-static char const BLOCK = 'B';
-static char const LOAD = 'L';
-static char const SHOOT = 'S';
-
-static char const INITIAL_MOVE = 'I';
-static char const START_GAME = 'Y';
-static char const EXIT_GAME = 'N';
-
 //States
-static int const DEAD = -1;
-static int const DRAW = 0;
-static int const ALIVE = 1;
-static int const LOADED = 2;
-static int const VICTOR = 3;
+static int const BLOCKED = 3;
+static int const LOADED = 7;
+static int const BLOCKED_N_LOADED = 8;
+static int const SHOOT = 5;
+
+static int const INITIAL_MOVE = 0;
+static int const START_GAME = 1;
+static int const EXIT_GAME = -1;
 
 #endif

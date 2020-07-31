@@ -1,114 +1,129 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "game_constants.h"
+#include "display.h"
 #include "move.h"
 
-void getMoveFromLandingMenu(char* userMove){
+bool getValidPlayerMove(int* playerMove,int validMove1, int validMove2){
 
-    printf("     FEELIN LUCKY??\n");
-    printf("      %c) HXLL YAH\n",START_GAME);
-    printf("      %c) NAH DU..\n",EXIT_GAME);
-    printf("        WELL? ");
+    scanf("%d", playerMove);
 
-    scanf(" %c", userMove);
+    if(*playerMove != validMove1 && *playerMove != validMove2)
+        return false;
+    else
+        return true;
+}
 
-    while(*userMove != START_GAME && *userMove != EXIT_GAME){
-        askForMoveAgain(userMove);
+void playOutMove(int* playerMove, int* opponentMove){
+
+        switch(*opponentMove){
+            case BLOCKED:
+                getPlayerMoveWhenOpponentBlocked(playerMove);
+                break;
+            case LOADED:
+                getPlayerMoveWhenOpponentLoaded(playerMove,opponentMove);
+                break;
+            case BLOCKED_N_LOADED:
+                getPlayerMoveWhenOpponentBlockedNLoaded(playerMove);
+                break;
+            case SHOOT:
+                getPlayerMoveWhenOpponentShoots(playerMove,opponentMove);
+                break;
+            default:
+                *playerMove = BLOCKED;
+                *opponentMove = BLOCKED;
+                break;
+        }
+
+        return;
+}
+
+void getPlayerMoveWhenOpponentBlocked(int* playerMove){
+
+    if(*playerMove == SHOOT){
+        displayDodging(playerMove);
+    } else{
+        displayWaiting(playerMove);
     }
 
     return;
 }
 
-void getMoveFromPlayingMenu(char* userMove, int* userState){
+void getPlayerMoveWhenOpponentLoaded(int* playerMove,int* opponentMove){
 
-	printf("     WHATDYA FEELIN\n");
-    printf("        %c) BLXCK\n",BLOCK);
-
-    if(*userState == LOADED){
-
-        printf("        %c) SH==T\n",SHOOT);
-        printf("        WELL? ");
-
-        scanf(" %c", userMove);
-
-        while(*userMove != BLOCK && *userMove != SHOOT){
-            askForMoveAgain(userMove);
-        }
-    }
-    else {
-
-        printf("        %c) L()AD\n",LOAD);
-        printf("        WELL? ");
-        scanf(" %c", userMove);
-
-        while(*(userMove) != BLOCK && *(userMove) != LOAD){
-            askForMoveAgain(userMove);
-        }
-
-        if(*(userMove) == LOAD){
-            *userState = LOADED;
-        }
+    if(*playerMove == SHOOT){
+        displayDead(playerMove);
+        *opponentMove = INITIAL_MOVE;//Game over: player won
+    } else{
+        displayLoaded(playerMove);
     }
 
-	return;
-}
-
-void askForMoveAgain(char* userMove){
-
-    printf("     WHATLL BE? ");
-
-    scanf(" %c", userMove);
     return;
 }
 
-int playOutBlock(int* playerState){
-    return *playerState;
+void getPlayerMoveWhenOpponentBlockedNLoaded(int* playerMove){
+
+    if(*playerMove == SHOOT){
+        displayDodgingWhileLoaded(playerMove);
+    } else{
+        displayLoaded(playerMove);
+    }
+
+    return;
 }
 
-int playOutLoad(char* compMove){
+void getPlayerMoveWhenOpponentShoots(int* playerMove,int* opponentMove){
 
-    if(*compMove == SHOOT)
-        return DEAD;
-
-    return LOADED;
-}
-
-int playOutShoot(char* compMove){
-
-    switch(*compMove){
+    switch(*playerMove){
+        case LOADED:
+            displayShooting(playerMove);
+            *opponentMove = INITIAL_MOVE;//Game over: opponent won
+            break;
         case SHOOT:
-            return DRAW;
-        case BLOCK:
-            return ALIVE;
+            displayDeadWhileShooting(playerMove);
+            *opponentMove = INITIAL_MOVE;//Game over: no one won
+            break;
         default :
-            return VICTOR;
+            displayShootingWhileMissing(playerMove);
+            break;
     }
+
+    return;
 }
 
-void getCompMove(char* compMove,int* compState,int* gameChance){
+void getCompMove(int* opponentMove,int* gameChance){
 
-    switch(*compState){
-        case ALIVE:
+    switch(*opponentMove){
+        case INITIAL_MOVE:
             if(*gameChance > 5){
-                *compMove = LOAD;
-                *compState = LOADED;
+                *opponentMove = LOADED;
             } else {
-                *compMove = BLOCK;
+                *opponentMove = BLOCKED;
             }
             break;
-        case LOADED:
-
-            if(*gameChance > 8){
-                *compMove = SHOOT;
-                *compState = ALIVE;
+        case BLOCKED:
+            if(*gameChance > 5){
+                *opponentMove = LOADED;
             } else {
-                *compMove = BLOCK;
+                *opponentMove = BLOCKED;
+            }
+            break;
+        case SHOOT:
+            if(*gameChance > 4){
+                *opponentMove = LOADED;
+            } else {
+                *opponentMove = BLOCKED;
             }
             break;
         default:
-            *compMove = BLOCK;
-            *compState = ALIVE;
+            if(*gameChance > 8){
+                *opponentMove = SHOOT;
+            } else {
+                *opponentMove = BLOCKED_N_LOADED;
+            }
+            break;
     }
 
     *gameChance = ((rand()%10) + 1);
