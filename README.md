@@ -9,7 +9,7 @@ This is an easy game that I created to remember some C basics as well as an advo
 * Headers
 * Makefiles
 
-#Rules of the Game
+# Rules of the Game
 This game is as easy as 1,2, Shoot! There are only 3 moves you can do
 1. Block - This will block the RRC shot IF the RCC choses to shoot.
 2. Load - This will load your gun.
@@ -38,7 +38,7 @@ rm -f *.o
 [~/repo/stand_off]$
 ```
 
-#Running
+# Running
 
 After compiling the code, you should have a binary named "stand_off". Simply run this binary and enjoy :)
 
